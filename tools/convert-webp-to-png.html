@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebP to PNG Converter | Multi-Tools</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/image-tools-branding.css">
+  <style>
+    
+    
+    body.dark-mode 
+    body.dark-mode .ad-space {
+      background: #23272b;
+      color: #aaa;
+      border-color: #444;
+    }
+    
+    .tool-card.dragover {
+      border-color: #0d6efd;
+      background: #e9f5ff;
+    }
+    .tool-card input[type="file"] {
+      display: none;
+    }
+    .preview-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .preview-item {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      padding: 0.5rem;
+      text-align: center;
+      width: 170px;
+      position: relative;
+    }
+    body.dark-mode .preview-item {
+      background: #23272b;
+      color: #e0e0e0;
+    }
+    .preview-img {
+      max-width: 100px;
+      max-height: 100px;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      background: #f8f9fa;
+    }
+    .after-img {
+      border: 2px solid #0d6efd;
+      margin-top: 0.5rem;
+    }
+    .download-btns {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .tool-card {
+      border: 2px dashed var(--card-border);
+      border-radius: 12px;
+      background: #fffbe6;
+      max-width: 700px;
+      min-height: 250px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      margin: 0 auto;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    body.dark-mode .tool-card {
+      background: #e0f0ff;
+      border-color: #444;
+      color: #222;
+    }
+    
+    @media (max-width: 768px) {
+      
+      .preview-list { gap: 0.5rem; }
+      .preview-item { width: 110px; font-size: 0.9rem; }
+      .preview-img { max-width: 70px; max-height: 70px; }
+    }
+    body.dark-mode {
+      background: #23272b !important;
+      color: #fff !important;
+    }
+    .dashboard-title, .dashboard-desc {
+      color: #1a1a1a;
+    }
+    body.dark-mode .dashboard-title, body.dark-mode .dashboard-desc {
+      color: #fff !important;
+    }
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 900px;
+    }
+    .dashboard-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .dashboard-desc {
+      color: #444;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center; font-size:1.1rem; font-weight:600; margin-top:1.2rem; margin-bottom:0.5rem; letter-spacing:0.5px; background: none;">
+    <span style="background: linear-gradient(90deg, #2563eb, #06b6d4, #f59e42, #e11d48); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent;">Developed By Md Uddin, Ohio, USA</span>
+  </div>
+  <button class="btn btn-outline-secondary mode-toggle" id="darkToggle" title="Toggle light/dark mode" style="position: fixed; top: 1.2rem; right: 1.2rem; z-index: 200;"><i class="bi bi-moon"></i></button>
+  <!-- Ad Space (Top Banner) -->
+  <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-bottom: 2rem;">
+      Ad Space (Top Banner)
+    </div>
+  </div>
+  <div class="converter-dashboard">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">WebP to PNG Converter</h1>
+      <div class="dashboard-desc">Convert WebP images to PNG or other formats. Fast, private, and easy to use on any device.</div>
+    </div>
+    <div class="tool-card p-4 mb-4 text-center" id="drop-area">
+      <div class="mb-3">
+        <i class="bi bi-file-earmark-image" style="font-size: 3rem; color: #888;"></i>
+      </div>
+      <div class="h5 mb-2">Drag & Drop WebP Images Here</div>
+      <div class="mb-2 text-muted">or</div>
+      <label class="btn btn-brand mb-2">
+        Choose WebP Images <input type="file" id="fileElem" accept="image/webp" multiple>
+      </label>
+      <div id="errorMsg" class="text-danger mt-2"></div>
+      <div id="preview" class="preview-list mt-4"></div>
+      <div class="download-btns mt-4" id="downloadBtns" style="display:none;">
+        <button class="btn btn-brand" id="downloadAllBtn"><i class="bi bi-archive"></i> Download All as ZIP</button>
+      </div>
+    </div>
+  </div>
+  <!-- Ad Space (Bottom Banner) -->
+  <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-top: 2rem;">
+      Ad Space (Bottom Banner)
+    </div>
+  </div>
+  <div id="footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer.js"></script>
+  <script>
+    // Dark mode toggle
+    const darkToggle = document.getElementById('darkToggle');
+    function setDarkMode(on) {
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('darkMode', on ? '1' : '0');
+      darkToggle.innerHTML = on ? '<i class="bi bi-brightness-high"></i>' : '<i class="bi bi-moon"></i>';
+    }
+    darkToggle.addEventListener('click', () => setDarkMode(!document.body.classList.contains('dark-mode')));
+    if (localStorage.getItem('darkMode') === '1' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setDarkMode(true);
+    }
+
+    // WebP to PNG logic
+    const dropArea = document.getElementById('drop-area');
+    const fileElem = document.getElementById('fileElem');
+    const preview = document.getElementById('preview');
+    const errorMsg = document.getElementById('errorMsg');
+    const downloadBtns = document.getElementById('downloadBtns');
+    const downloadAllBtn = document.getElementById('downloadAllBtn');
+    let images = [];
+    function reset() {
+      images = [];
+      preview.innerHTML = '';
+      downloadBtns.style.display = 'none';
+      errorMsg.textContent = '';
+    }
+    function handleFiles(files) {
+      reset();
+      if (!files.length) return;
+      let valid = 0;
+      Array.from(files).forEach((file, idx) => {
+        if (file.type !== 'image/webp') return;
+        valid++;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new window.Image();
+          img.onload = function() {
+            images.push({ file, dataUrl: e.target.result, width: img.width, height: img.height, idx, pngUrl: null });
+            convertToPng(images.length - 1);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+      if (valid === 0) errorMsg.textContent = 'No valid WebP files found.';
+    }
+    function renderPreview() {
+      preview.innerHTML = '';
+      if (!images.length) return;
+      images.forEach((imgObj, i) => {
+        const div = document.createElement('div');
+        div.className = 'preview-item';
+        div.innerHTML = `
+          <div class="mb-1">Before</div>
+          <img src="${imgObj.dataUrl}" class="preview-img mb-1" alt="WebP Preview">
+          <div class="small text-muted mb-1">${imgObj.file.name}</div>
+          <div class="small text-muted mb-1">${imgObj.width}x${imgObj.height}px</div>
+          <div class="mb-1">After</div>
+          <img src="${imgObj.pngUrl ? imgObj.pngUrl : ''}" class="preview-img after-img mb-1" id="after-img-${i}" alt="PNG Preview">
+          <button class="btn btn-outline-success btn-sm w-100 mb-1" id="download-btn-${i}" ${imgObj.pngUrl ? '' : 'disabled'}><i class="bi bi-download"></i> Download PNG</button>
+        `;
+        preview.appendChild(div);
+      });
+      downloadBtns.style.display = images.length > 1 ? '' : 'none';
+      images.forEach((imgObj, i) => {
+        const btn = document.getElementById(`download-btn-${i}`);
+        if (btn) {
+          btn.onclick = () => downloadPng(i);
+          btn.disabled = !imgObj.pngUrl;
+        }
+      });
+    }
+    function convertToPng(idx) {
+      const imgObj = images[idx];
+      const img = new window.Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = imgObj.width;
+        canvas.height = imgObj.height;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, imgObj.width, imgObj.height);
+        canvas.toBlob(blob => {
+          imgObj.pngUrl = URL.createObjectURL(blob);
+          renderPreview();
+        }, 'image/png');
+      };
+      img.src = imgObj.dataUrl;
+    }
+    function downloadPng(idx) {
+      const imgObj = images[idx];
+      if (!imgObj.pngUrl) return;
+      const a = document.createElement('a');
+      a.href = imgObj.pngUrl;
+      a.download = imgObj.file.name.replace(/\.[^.]+$/, '') + '.png';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { a.remove(); }, 100);
+    }
+    async function downloadAllAsZip() {
+      const zip = new JSZip();
+      let done = 0;
+      for (let i = 0; i < images.length; i++) {
+        await new Promise(resolve => {
+          const imgObj = images[i];
+          if (!imgObj.pngUrl) return resolve();
+          fetch(imgObj.pngUrl).then(r => r.blob()).then(blob => {
+            zip.file(imgObj.file.name.replace(/\.[^.]+$/, '') + '.png', blob);
+            done++;
+            resolve();
+          });
+        });
+      }
+      const content = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'converted-pngs.zip';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+    }
+    downloadAllBtn.addEventListener('click', downloadAllAsZip);
+    // Drag and drop
+    dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('dragover'); });
+    dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.classList.remove('dragover'); });
+    dropArea.addEventListener('drop', e => {
+      e.preventDefault();
+      dropArea.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+    fileElem.addEventListener('change', e => handleFiles(e.target.files));
+  </script>
+</body>
+</html>

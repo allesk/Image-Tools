@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator | Multi-Tools</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/image-tools-branding.css">
+  <style>
+    
+    
+    body.dark-mode 
+    body.dark-mode .ad-space {
+      background: #23272b;
+      color: #aaa;
+      border-color: #444;
+    }
+    
+    .tool-card input[type="file"] {
+      display: none;
+    }
+    .qr-preview {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 220px;
+      margin-bottom: 1rem;
+    }
+    .qr-canvas {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      padding: 0.5rem;
+      max-width: 220px;
+      max-height: 220px;
+    }
+    
+    .logo-preview {
+      max-width: 48px;
+      max-height: 48px;
+      border-radius: 8px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    .tool-card {
+      border: 2px dashed var(--card-border);
+      border-radius: 12px;
+      background: #fffbe6;
+      max-width: 700px;
+      min-height: 250px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      margin: 0 auto;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    body.dark-mode .tool-card {
+      background: #e0f0ff;
+      border-color: #444;
+      color: #222;
+    }
+    @media (max-width: 768px) {
+      
+      .qr-canvas { max-width: 120px; max-height: 120px; }
+    }
+    body.dark-mode {
+      background: #23272b !important;
+      color: #fff !important;
+    }
+    .dashboard-title, .dashboard-desc {
+      color: #1a1a1a;
+    }
+    body.dark-mode .dashboard-title, body.dark-mode .dashboard-desc {
+      color: #fff !important;
+    }
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 900px;
+    }
+    .dashboard-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .dashboard-desc {
+      color: #444;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center; font-size:1.1rem; font-weight:600; margin-top:1.2rem; margin-bottom:0.5rem; letter-spacing:0.5px; background: none;">
+    <span style="background: linear-gradient(90deg, #2563eb, #06b6d4, #f59e42, #e11d48); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent;">Developed By Md Uddin, Ohio, USA</span>
+  </div>
+  <button class="btn btn-outline-secondary mode-toggle" id="darkToggle" title="Toggle light/dark mode" style="position: fixed; top: 1.2rem; right: 1.2rem; z-index: 200;"><i class="bi bi-moon"></i></button>
+  <!-- Ad Space (Top Banner) -->
+  <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-bottom: 2rem;">
+      Ad Space (Top Banner)
+    </div>
+  </div>
+  <div class="converter-dashboard">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">QR Code Generator</h1>
+      <div class="dashboard-desc">Generate QR codes for URLs, text, or any data. Fast, private, and easy to use on any device.</div>
+    </div>
+    <div class="tool-card p-4 mb-4" id="qrCard">
+      <div class="mb-3">
+        <i class="bi bi-qr-code" style="font-size: 2.5rem; color: #888;"></i>
+      </div>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" id="qrInput" placeholder="Enter text, URL, phone, or email...">
+        <button class="btn btn-outline-secondary" id="copyInputBtn" title="Copy input"><i class="bi bi-clipboard"></i></button>
+      </div>
+      <div class="row g-2 mb-3">
+        <div class="col-6">
+          <label class="form-label mb-1">Color</label>
+          <input type="color" id="qrColor" class="form-control form-control-color" value="#222222">
+        </div>
+        <div class="col-6">
+          <label class="form-label mb-1">Background</label>
+          <input type="color" id="qrBgColor" class="form-control form-control-color" value="#ffffff">
+        </div>
+        <div class="col-6">
+          <label class="form-label mb-1">Size</label>
+          <input type="number" id="qrSize" class="form-control" min="120" max="600" value="220">
+        </div>
+        <div class="col-6">
+          <label class="form-label mb-1">Error Correction</label>
+          <select id="qrError" class="form-select">
+            <option value="L">L (7%)</option>
+            <option value="M" selected>M (15%)</option>
+            <option value="Q">Q (25%)</option>
+            <option value="H">H (30%)</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label mb-1">Logo (optional)</label>
+        <input type="file" id="logoInput" accept="image/*">
+        <img id="logoPreview" class="logo-preview" style="display:none;">
+      </div>
+      <div class="qr-preview mb-3">
+        <div id="qrCanvas" class="qr-canvas"></div>
+      </div>
+      <div class="d-flex flex-wrap gap-2 justify-content-center mb-2">
+        <button class="btn btn-outline-secondary btn-sm" id="downloadPng"><i class="bi bi-image"></i> PNG</button>
+        <button class="btn btn-outline-secondary btn-sm" id="downloadJpg"><i class="bi bi-file-earmark-image"></i> JPG</button>
+        <button class="btn btn-outline-secondary btn-sm" id="downloadSvg"><i class="bi bi-filetype-svg"></i> SVG</button>
+      </div>
+    </div>
+  </div>
+  <!-- Ad Space (Bottom Banner) -->
+  <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-top: 2rem;">
+      Ad Space (Bottom Banner)
+    </div>
+  </div>
+  <div id="footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer.js"></script>
+  <script>
+    // Dark mode toggle
+    const darkToggle = document.getElementById('darkToggle');
+    function setDarkMode(on) {
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('darkMode', on ? '1' : '0');
+      darkToggle.innerHTML = on ? '<i class="bi bi-brightness-high"></i>' : '<i class="bi bi-moon"></i>';
+    }
+    darkToggle.addEventListener('click', () => setDarkMode(!document.body.classList.contains('dark-mode')));
+    if (localStorage.getItem('darkMode') === '1' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setDarkMode(true);
+    }
+
+    // QR Code logic
+    const qrInput = document.getElementById('qrInput');
+    const qrColor = document.getElementById('qrColor');
+    const qrBgColor = document.getElementById('qrBgColor');
+    const qrSize = document.getElementById('qrSize');
+    const qrError = document.getElementById('qrError');
+    const logoInput = document.getElementById('logoInput');
+    const logoPreview = document.getElementById('logoPreview');
+    const qrCanvas = document.getElementById('qrCanvas');
+    const downloadPng = document.getElementById('downloadPng');
+    const downloadJpg = document.getElementById('downloadJpg');
+    const downloadSvg = document.getElementById('downloadSvg');
+    const copyInputBtn = document.getElementById('copyInputBtn');
+    let qr = null;
+    let logoDataUrl = '';
+    function updateQR() {
+      if (!qrInput.value) {
+        qrCanvas.innerHTML = '<div class="text-muted">Enter data to generate QR</div>';
+        return;
+      }
+      qr = new QRCodeStyling({
+        width: parseInt(qrSize.value),
+        height: parseInt(qrSize.value),
+        data: qrInput.value,
+        image: logoDataUrl || undefined,
+        dotsOptions: { color: qrColor.value, type: 'rounded' },
+        backgroundOptions: { color: qrBgColor.value },
+        imageOptions: { crossOrigin: 'anonymous', margin: 4 },
+        qrOptions: { errorCorrectionLevel: qrError.value }
+      });
+      qrCanvas.innerHTML = '';
+      qr.append(qrCanvas);
+    }
+    [qrInput, qrColor, qrBgColor, qrSize, qrError].forEach(el => el.addEventListener('input', updateQR));
+    logoInput.addEventListener('change', function() {
+      if (!logoInput.files.length) { logoDataUrl = ''; logoPreview.style.display = 'none'; updateQR(); return; }
+      const file = logoInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        logoDataUrl = e.target.result;
+        logoPreview.src = logoDataUrl;
+        logoPreview.style.display = '';
+        updateQR();
+      };
+      reader.readAsDataURL(file);
+    });
+    qrInput.addEventListener('input', updateQR);
+    // Clipboard copy
+    copyInputBtn.addEventListener('click', function() {
+      if (!qrInput.value) return;
+      navigator.clipboard.writeText(qrInput.value).then(() => {
+        copyInputBtn.innerHTML = '<i class="bi bi-clipboard-check"></i>';
+        setTimeout(() => { copyInputBtn.innerHTML = '<i class="bi bi-clipboard"></i>'; }, 1200);
+      });
+    });
+    // Download
+    downloadPng.addEventListener('click', () => qr && qr.download({ extension: 'png' }));
+    downloadJpg.addEventListener('click', () => qr && qr.download({ extension: 'jpg' }));
+    downloadSvg.addEventListener('click', () => qr && qr.download({ extension: 'svg' }));
+    // Initial QR
+    updateQR();
+  </script>
+</body>
+</html>

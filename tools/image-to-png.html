@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image to PNG Converter | Multi-Tools</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/image-tools-branding.css">
+  <style>
+    body {
+      background: var(--brand-gray-50, #f8fafc);
+      color: #222;
+      font-family: 'Inter', 'Poppins', 'Montserrat', Arial, sans-serif;
+    }
+    .converter-dashboard {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem 1rem;
+    }
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .dashboard-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+    .dashboard-desc {
+      color: #444;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+    .conversion-type-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .conversion-type-btn {
+      border: none;
+      background: var(--brand-primary, #6366f1);
+      color: #fff;
+      border-radius: 8px;
+      padding: 0.5rem 1.2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+    }
+    .conversion-type-btn.active, .conversion-type-btn:focus {
+      background: var(--brand-secondary, #06b6d4);
+      color: #fff;
+      outline: none;
+    }
+    .upload-area {
+      background: #fffbe6;
+      border: 2px dashed #e0e0e0;
+      border-radius: 16px;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .upload-area.dragover {
+      border-color: var(--brand-primary, #6366f1);
+      background: #e0f0ff;
+    }
+    .upload-icon {
+      font-size: 2.5rem;
+      color: var(--brand-primary, #6366f1);
+      margin-bottom: 1rem;
+    }
+    .upload-area input[type="file"] {
+      display: none;
+    }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .preview-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      padding: 1rem;
+      text-align: center;
+      position: relative;
+      transition: box-shadow 0.2s;
+    }
+    .preview-card img {
+      max-width: 100%;
+      max-height: 120px;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      background: #f8fafc;
+    }
+    .preview-card .file-info {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+    .preview-card .remove-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: transparent;
+      border: none;
+      color: #ef4444;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .conversion-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .quality-slider {
+      min-width: 180px;
+      max-width: 260px;
+    }
+    .download-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .btn-brand, .btn-brand-outline {
+      min-width: 140px;
+    }
+    .mode-toggle {
+      position: fixed;
+      top: 1.2rem;
+      right: 1.2rem;
+      z-index: 100;
+    }
+    @media (max-width: 600px) {
+      .converter-dashboard {
+        padding: 1rem 0.2rem 2rem 0.2rem;
+      }
+      .preview-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .conversion-controls {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+    body.dark-mode {
+      background: #23272b !important;
+      color: #fff !important;
+    }
+    .dashboard-title, .dashboard-desc {
+      color: #1a1a1a;
+    }
+    body.dark-mode .dashboard-title, body.dark-mode .dashboard-desc {
+      color: #fff !important;
+    }
+    body.dark-mode .upload-area {
+      background: #e0f0ff;
+      border-color: #6366f1;
+      color: #222;
+    }
+    .upload-area label.btn {
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+    }
+    .upload-area input[type="file"] {
+      position: absolute;
+      left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
+      z-index: 3;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center; font-size:1.1rem; font-weight:600; margin-top:1.2rem; margin-bottom:0.5rem; letter-spacing:0.5px; background: none;">
+    <span style="background: linear-gradient(90deg, #2563eb, #06b6d4, #f59e42, #e11d48); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent;">Developed By Md Uddin, Ohio, USA</span>
+  </div>
+  <button class="btn btn-outline-secondary mode-toggle" id="darkToggle" title="Toggle light/dark mode" style="position: fixed; top: 1.2rem; right: 1.2rem; z-index: 200;"><i class="bi bi-moon"></i></button>
+  <!-- Ad Space (Top Banner) -->
+  <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-bottom: 2rem;">
+      Ad Space (Top Banner)
+    </div>
+  </div>
+  <div class="converter-dashboard">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Image to PNG Converter</h1>
+      <div class="dashboard-desc">Convert images to PNG or other formats (JPG, PNG, GIF, BMP, WEBP, TIFF, HEIC, SVG, PDF, and more). Fast, private, and easy to use on any device.</div>
+    </div>
+    <div class="conversion-type-selector" id="conversionTypeSelector">
+      <button class="conversion-type-btn" data-format="png">PNG</button>
+      <button class="conversion-type-btn" data-format="jpg">JPG</button>
+      <button class="conversion-type-btn" data-format="webp">WEBP</button>
+      <button class="conversion-type-btn" data-format="gif">GIF</button>
+      <button class="conversion-type-btn" data-format="pdf">PDF</button>
+      <button class="conversion-type-btn" id="customBtn">Custom...</button>
+    </div>
+    <div class="upload-area" id="uploadArea" tabindex="0" aria-label="Upload images">
+      <div class="upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+      <div class="mb-2">Drag & drop images here or <label class="btn btn-brand btn-sm mb-0" tabindex="0"><i class="bi bi-upload"></i> Choose Files<input type="file" id="fileInput" accept="image/*,.heic,.svg,.pdf" multiple tabindex="-1"></label></div>
+      <div class="small text-muted">Supported: JPG, PNG, GIF, BMP, WEBP, TIFF, HEIC, SVG, PDF</div>
+    </div>
+    <!-- Custom Options Modal -->
+    <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="customModalLabel">Custom Conversion Options</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="customFormat" class="form-label">Format</label>
+              <select class="form-select" id="customFormat">
+                <option value="png">PNG</option>
+                <option value="jpg">JPG</option>
+                <option value="webp">WEBP</option>
+                <option value="gif">GIF</option>
+                <option value="pdf">PDF</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="customQuality" class="form-label">Quality</label>
+              <input type="range" class="form-range" min="10" max="100" value="100" id="customQuality">
+              <span id="customQualityValue">100%</span>
+            </div>
+            <!-- Add more custom options here if needed -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-brand" id="applyCustomOptions">Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="preview-grid" id="previewGrid" style="display:none;"></div>
+    <div class="conversion-controls" id="conversionControls" style="display:none;">
+      <div>
+        <label for="outputFormat" class="form-label">Convert to</label>
+        <select class="form-select" id="outputFormat">
+          <option value="png">PNG</option>
+          <option value="jpg">JPG</option>
+          <option value="webp">WEBP</option>
+          <option value="gif">GIF</option>
+          <option value="pdf">PDF</option>
+        </select>
+      </div>
+      <div class="quality-slider">
+        <label for="qualityRange" class="form-label">Quality <span id="qualityValue">100%</span></label>
+        <input type="range" class="form-range" min="10" max="100" value="100" id="qualityRange">
+      </div>
+    </div>
+    <div class="download-btns" id="downloadBtns" style="display:none;">
+      <button class="btn btn-brand" id="downloadAllBtn"><i class="bi bi-archive"></i> Download All as ZIP</button>
+    </div>
+  </div>
+  <!-- Ad Space (Bottom Banner) -->
+  <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-top: 2rem;">
+      Ad Space (Bottom Banner)
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    // Light/dark mode toggle
+    const darkToggle = document.getElementById('darkToggle');
+    function setDarkMode(on) {
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('darkMode', on ? '1' : '0');
+      darkToggle.innerHTML = on ? '<i class="bi bi-brightness-high"></i>' : '<i class="bi bi-moon"></i>';
+    }
+    darkToggle.addEventListener('click', () => setDarkMode(!document.body.classList.contains('dark-mode')));
+    if (localStorage.getItem('darkMode') === '1' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setDarkMode(true);
+    }
+
+    // --- Drag & Drop and File Input Logic ---
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const previewGrid = document.getElementById('previewGrid');
+    const conversionControls = document.getElementById('conversionControls');
+    const downloadBtns = document.getElementById('downloadBtns');
+    const conversionTypeSelector = document.getElementById('conversionTypeSelector');
+    let selectedFormat = null;
+    let files = [];
+    let convertedImages = [];
+
+    // Remove all active states on load
+    Array.from(conversionTypeSelector.querySelectorAll('.conversion-type-btn')).forEach(btn => btn.classList.remove('active'));
+
+    // File input click fix: ensure label is always clickable
+    // (No extra JS needed if label/input is correct, but add fallback)
+    uploadArea.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'LABEL' && !e.target.classList.contains('btn')) {
+        fileInput.click();
+      }
+    });
+
+    // Drag & drop events
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+    });
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+    });
+
+    function renderPreviews() {
+      previewGrid.innerHTML = '';
+      convertedImages = [];
+      files.forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            // Convert image to selected format
+            convertImage(img, file, idx, e.target.result);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function convertImage(img, file, idx, originalDataUrl) {
+      const format = selectedFormat || 'png';
+      let mimeType = 'image/png';
+      let ext = 'png';
+      if (format === 'jpg' || format === 'jpeg') { mimeType = 'image/jpeg'; ext = 'jpg'; }
+      else if (format === 'webp') { mimeType = 'image/webp'; ext = 'webp'; }
+      else if (format === 'gif') { mimeType = 'image/gif'; ext = 'gif'; }
+      // For PDF, skip for now (needs special handling)
+      let dataUrl = originalDataUrl;
+      if (format !== 'pdf') {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        let quality = parseInt(document.getElementById('qualityRange').value, 10) / 100;
+        dataUrl = canvas.toDataURL(mimeType, quality);
+      }
+      convertedImages[idx] = { name: file.name.replace(/\.[^.]+$/, '') + '.' + ext, dataUrl };
+      // Render preview card
+      const card = document.createElement('div');
+      card.className = 'preview-card';
+      card.innerHTML = `
+        <img src="${dataUrl}" alt="Preview">
+        <div class="file-info">${file.name} (${(file.size/1024).toFixed(1)} KB)</div>
+        <a href="${dataUrl}" download="${convertedImages[idx].name}" class="btn btn-sm btn-brand mb-2"><i class="bi bi-download"></i> Download</a>
+        <button class="remove-btn" title="Remove" aria-label="Remove image">&times;</button>
+      `;
+      card.querySelector('.remove-btn').onclick = () => {
+        files.splice(idx, 1);
+        renderPreviews();
+      };
+      previewGrid.appendChild(card);
+    }
+
+    function handleFiles(fileList) {
+      files = Array.from(fileList);
+      if (files.length > 0) {
+        previewGrid.style.display = '';
+        conversionControls.style.display = '';
+        downloadBtns.style.display = '';
+        if (!selectedFormat) {
+          selectedFormat = 'png';
+          setActiveFormatBtn('png');
+        }
+        renderPreviews();
+      } else {
+        previewGrid.style.display = 'none';
+        conversionControls.style.display = 'none';
+        downloadBtns.style.display = 'none';
+      }
+    }
+
+    // Format selection
+    function setActiveFormatBtn(format) {
+      Array.from(conversionTypeSelector.querySelectorAll('.conversion-type-btn')).forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.format === format);
+      });
+      selectedFormat = format;
+      // Sync dropdown if needed
+      const outputFormat = document.getElementById('outputFormat');
+      if (outputFormat) outputFormat.value = format;
+    }
+    conversionTypeSelector.addEventListener('click', (e) => {
+      if (e.target.classList.contains('conversion-type-btn')) {
+        if (e.target.id === 'customBtn') {
+          // Open custom modal
+          const customModal = new bootstrap.Modal(document.getElementById('customModal'));
+          customModal.show();
+        } else {
+          setActiveFormatBtn(e.target.dataset.format);
+        }
+      }
+    });
+
+    // Custom modal logic
+    const customBtn = document.getElementById('customBtn');
+    const customFormat = document.getElementById('customFormat');
+    const customQuality = document.getElementById('customQuality');
+    const customQualityValue = document.getElementById('customQualityValue');
+    if (customQuality) {
+      customQuality.addEventListener('input', () => {
+        customQualityValue.textContent = customQuality.value + '%';
+      });
+    }
+    document.getElementById('applyCustomOptions').addEventListener('click', () => {
+      setActiveFormatBtn(customFormat.value);
+      document.getElementById('qualityRange').value = customQuality.value;
+      document.getElementById('qualityValue').textContent = customQuality.value + '%';
+      bootstrap.Modal.getInstance(document.getElementById('customModal')).hide();
+    });
+    // Accessibility: keyboard navigation for upload area
+    uploadArea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        fileInput.click();
+      }
+    });
+
+    // Download all as ZIP
+    document.getElementById('downloadAllBtn').onclick = async function() {
+      if (!convertedImages.length) return;
+      const zip = new JSZip();
+      convertedImages.forEach(img => {
+        zip.file(img.name, img.dataUrl.split(',')[1], {base64: true});
+      });
+      const blob = await zip.generateAsync({type: 'blob'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'converted-images.zip';
+      a.click();
+    };
+
+    // Re-render previews on format/quality change
+    document.getElementById('outputFormat').addEventListener('change', e => {
+      selectedFormat = e.target.value;
+      setActiveFormatBtn(selectedFormat);
+      renderPreviews();
+    });
+    document.getElementById('qualityRange').addEventListener('input', e => {
+      document.getElementById('qualityValue').textContent = e.target.value + '%';
+      renderPreviews();
+    });
+  </script>
+</body>
+</html>

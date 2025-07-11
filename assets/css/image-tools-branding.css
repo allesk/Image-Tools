@@ -1,0 +1,348 @@
+/* Image Tools Suite - Branding System */
+
+:root {
+  /* Primary Brand Colors */
+  --brand-primary: #6366f1;
+  --brand-primary-dark: #4f46e5;
+  --brand-primary-light: #818cf8;
+  --brand-secondary: #06b6d4;
+  --brand-secondary-dark: #0891b2;
+  --brand-secondary-light: #22d3ee;
+  
+  /* Accent Colors */
+  --brand-accent-1: #f59e0b;
+  --brand-accent-2: #10b981;
+  --brand-accent-3: #ef4444;
+  --brand-accent-4: #8b5cf6;
+  
+  /* Neutral Colors */
+  --brand-gray-50: #f9fafb;
+  --brand-gray-100: #f3f4f6;
+  --brand-gray-200: #e5e7eb;
+  --brand-gray-300: #d1d5db;
+  --brand-gray-400: #9ca3af;
+  --brand-gray-500: #6b7280;
+  --brand-gray-600: #4b5563;
+  --brand-gray-700: #374151;
+  --brand-gray-800: #1f2937;
+  --brand-gray-900: #111827;
+  
+  /* Status Colors */
+  --brand-success: #10b981;
+  --brand-warning: #f59e0b;
+  --brand-error: #ef4444;
+  --brand-info: #3b82f6;
+  
+  /* Dark Mode Colors */
+  --dark-bg: #0f172a;
+  --dark-surface: #1e293b;
+  --dark-surface-2: #334155;
+  --dark-text: #f1f5f9;
+  --dark-text-secondary: #cbd5e1;
+}
+
+/* Dark Mode Overrides */
+body.dark-mode {
+  --brand-gray-50: #0f172a;
+  --brand-gray-100: #1e293b;
+  --brand-gray-200: #334155;
+  --brand-gray-300: #475569;
+  --brand-gray-400: #64748b;
+  --brand-gray-500: #94a3b8;
+  --brand-gray-600: #cbd5e1;
+  --brand-gray-700: #e2e8f0;
+  --brand-gray-800: #f1f5f9;
+  --brand-gray-900: #f8fafc;
+}
+
+/* Brand Logo and Icon System */
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+
+.brand-logo:hover {
+  color: var(--brand-primary-dark);
+  text-decoration: none;
+}
+
+.brand-logo-icon {
+  width: 2rem;
+  height: 2rem;
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+/* Tool Icons - Modern, Consistent Design */
+.tool-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+  border-radius: 12px;
+  color: white;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+  transition: all 0.3s ease;
+}
+
+.tool-icon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+}
+
+.tool-icon.large {
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
+}
+
+.tool-icon.small {
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
+}
+
+/* Tool-Specific Icon Colors */
+.tool-icon.converter { background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary)); }
+.tool-icon.resizer { background: linear-gradient(135deg, var(--brand-accent-1), var(--brand-accent-2)); }
+.tool-icon.compressor { background: linear-gradient(135deg, var(--brand-accent-2), var(--brand-accent-3)); }
+.tool-icon.cropper { background: linear-gradient(135deg, var(--brand-accent-3), var(--brand-accent-4)); }
+.tool-icon.encoder { background: linear-gradient(135deg, var(--brand-accent-4), var(--brand-primary)); }
+.tool-icon.generator { background: linear-gradient(135deg, var(--brand-secondary), var(--brand-accent-1)); }
+.tool-icon.pdf { background: linear-gradient(135deg, var(--brand-error), var(--brand-accent-1)); }
+
+/* Enhanced Tool Cards */
+.tool-card {
+  border: 2px dashed var(--brand-gray-200);
+  border-radius: 16px;
+  background: var(--brand-gray-50);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tool-card:hover::before {
+  opacity: 1;
+}
+
+.tool-card:hover {
+  border-color: var(--brand-primary);
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Brand Buttons */
+.btn-brand {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+}
+
+.btn-brand:hover {
+  background: linear-gradient(135deg, var(--brand-primary-dark), var(--brand-secondary-dark));
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+.btn-brand-outline {
+  background: transparent;
+  border: 2px solid var(--brand-primary);
+  color: var(--brand-primary);
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-brand-outline:hover {
+  background: var(--brand-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+/* Status Indicators */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.status-indicator.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--brand-success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-indicator.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--brand-warning);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-indicator.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--brand-error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-indicator.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--brand-info);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Progress Indicators */
+.progress-brand {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--brand-gray-200);
+  overflow: hidden;
+}
+
+.progress-brand-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Loading Spinner */
+.spinner-brand {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--brand-gray-200);
+  border-top: 3px solid var(--brand-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Tool Header Styling */
+.tool-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.tool-header .tool-icon {
+  margin: 0 auto 1rem;
+}
+
+.tool-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--brand-gray-800);
+  margin-bottom: 0.5rem;
+}
+
+.tool-description {
+  font-size: 1.1rem;
+  color: var(--brand-gray-600);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tool-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
+  }
+  
+  .tool-icon.large {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.5rem;
+  }
+  
+  .tool-title {
+    font-size: 1.5rem;
+  }
+  
+  .tool-description {
+    font-size: 1rem;
+  }
+}
+
+/* Dark Mode Enhancements */
+body.dark-mode .tool-card {
+  background: var(--dark-surface);
+  border-color: var(--dark-surface-2);
+}
+
+body.dark-mode .tool-title {
+  color: var(--dark-text);
+}
+
+body.dark-mode .tool-description {
+  color: var(--dark-text-secondary);
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Utility Classes */
+.text-brand-primary { color: var(--brand-primary) !important; }
+.text-brand-secondary { color: var(--brand-secondary) !important; }
+.bg-brand-primary { background-color: var(--brand-primary) !important; }
+.bg-brand-secondary { background-color: var(--brand-secondary) !important; }
+.border-brand-primary { border-color: var(--brand-primary) !important; }
+.border-brand-secondary { border-color: var(--brand-secondary) !important; } 

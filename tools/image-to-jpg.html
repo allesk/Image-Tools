@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image to JPG Converter | Multi-Tools</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/image-tools-branding.css">
+  <style>
+    .preview-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .preview-item {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      padding: 0.5rem;
+      text-align: center;
+      width: 160px;
+      position: relative;
+    }
+    body.dark-mode .preview-item {
+      background: var(--dark-surface);
+      color: var(--dark-text);
+    }
+    .preview-img {
+      max-width: 110px;
+      max-height: 110px;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      background: #f8f9fa;
+    }
+    .resize-inputs, .crop-inputs {
+      display: flex;
+      gap: 0.25rem;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+    .download-btns {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .quality-slider {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+    .slider-label {
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: 0.2rem;
+    }
+    .tool-card {
+      border: 2px dashed var(--card-border);
+      border-radius: 12px;
+      background: #fffbe6;
+      max-width: 700px;
+      min-height: 250px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      margin: 0 auto;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    body.dark-mode .tool-card {
+      background: #e0f0ff;
+      border-color: #444;
+      color: #222;
+    }
+    @media (max-width: 768px) {
+      .preview-list { gap: 0.5rem; }
+      .preview-item { width: 110px; font-size: 0.9rem; }
+      .preview-img { max-width: 70px; max-height: 70px; }
+    }
+    body.dark-mode {
+      background: #23272b !important;
+      color: #fff !important;
+    }
+    .dashboard-title, .dashboard-desc {
+      color: #1a1a1a;
+    }
+    body.dark-mode .dashboard-title, body.dark-mode .dashboard-desc {
+      color: #fff !important;
+    }
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 900px;
+    }
+    .dashboard-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .dashboard-desc {
+      color: #444;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center; font-size:1.1rem; font-weight:600; margin-top:1.2rem; margin-bottom:0.5rem; letter-spacing:0.5px; background: none;">
+    <span style="background: linear-gradient(90deg, #2563eb, #06b6d4, #f59e42, #e11d48); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent;">Developed By Md Uddin, Ohio, USA</span>
+  </div>
+  <div id="header"></div>
+  <div class="container mt-4 position-relative">
+    <button class="btn btn-outline-secondary mode-toggle" id="darkToggle" title="Toggle light/dark mode" style="position: fixed; top: 1.2rem; right: 1.2rem; z-index: 200;"><i class="bi bi-moon"></i></button>
+    <!-- Ad Space (Top Banner) -->
+    <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+      <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-bottom: 2rem;">
+        Ad Space (Top Banner)
+      </div>
+    </div>
+    <div class="converter-dashboard">
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">Image to JPG Converter</h1>
+        <div class="dashboard-desc">Convert images to JPG or other formats (PNG, GIF, BMP, WEBP, TIFF, HEIC, SVG, PDF, and more). Fast, private, and easy to use on any device.</div>
+      </div>
+      <div class="tool-card p-4 mb-4 text-center" id="drop-area">
+        <div class="mb-3">
+          <div class="tool-icon converter">
+            <i class="bi bi-arrow-repeat"></i>
+          </div>
+        </div>
+        <div class="h5 mb-2">Drag & Drop Images Here</div>
+        <div class="mb-2 text-muted">or</div>
+        <label class="btn btn-brand mb-2">
+          <i class="bi bi-upload"></i> Choose Images <input type="file" id="fileElem" accept="image/*,.bmp,.tiff,.tif,.gif,.jpg,.jpeg,.png,.heic,.webp" multiple>
+        </label>
+        <div id="errorMsg" class="text-danger mt-2"></div>
+        <div id="preview" class="preview-list mt-4"></div>
+        <div class="download-btns mt-4" id="downloadBtns" style="display:none;">
+          <button class="btn btn-brand" id="downloadAllBtn"><i class="bi bi-archive"></i> Download All as ZIP</button>
+        </div>
+      </div>
+      <!-- Ad Space (Bottom Banner) -->
+      <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+        <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-top: 2rem;">
+          Ad Space (Bottom Banner)
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer.js"></script>
+  <script>
+    // Dark mode toggle
+    const darkToggle = document.getElementById('darkToggle');
+    function setDarkMode(on) {
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('darkMode', on ? '1' : '0');
+      darkToggle.innerHTML = on ? '<i class="bi bi-brightness-high"></i>' : '<i class="bi bi-moon"></i>';
+    }
+    darkToggle.addEventListener('click', () => setDarkMode(!document.body.classList.contains('dark-mode')));
+    if (localStorage.getItem('darkMode') === '1' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setDarkMode(true);
+    }
+
+    // Image to JPG logic
+    const dropArea = document.getElementById('drop-area');
+    const fileElem = document.getElementById('fileElem');
+    const preview = document.getElementById('preview');
+    const errorMsg = document.getElementById('errorMsg');
+    const downloadBtns = document.getElementById('downloadBtns');
+    const downloadAllBtn = document.getElementById('downloadAllBtn');
+    let images = [];
+    function reset() {
+      images = [];
+      preview.innerHTML = '';
+      downloadBtns.style.display = 'none';
+      errorMsg.textContent = '';
+    }
+    function handleFiles(files) {
+      reset();
+      if (!files.length) return;
+      let valid = 0;
+      Array.from(files).forEach((file, idx) => {
+        if (!file.type.startsWith('image/')) return;
+        valid++;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new window.Image();
+          img.onload = function() {
+            images.push({ file, dataUrl: e.target.result, width: img.width, height: img.height, idx, quality: 0.92, crop: false });
+            renderPreview();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+      if (valid === 0) errorMsg.textContent = 'No valid image files found.';
+    }
+    function renderPreview() {
+      preview.innerHTML = '';
+      if (!images.length) return;
+      images.forEach((imgObj, i) => {
+        const div = document.createElement('div');
+        div.className = 'preview-item';
+        div.innerHTML = `
+          <img src="${imgObj.dataUrl}" class="preview-img mb-2" alt="Preview">
+          <div class="small text-muted mb-1">${imgObj.file.name}</div>
+          <div class="small text-muted mb-1">${imgObj.width}x${imgObj.height}px</div>
+          <div class="resize-inputs mb-1">
+            <input type="number" min="1" class="form-control form-control-sm" style="width:60px;" placeholder="W" value="${imgObj.width}" id="resize-w-${i}">
+            <input type="number" min="1" class="form-control form-control-sm" style="width:60px;" placeholder="H" value="${imgObj.height}" id="resize-h-${i}">
+          </div>
+          <div class="slider-label">JPG Quality: <span id="quality-val-${i}">${Math.round(imgObj.quality*100)}</span>%</div>
+          <input type="range" min="10" max="100" value="${Math.round(imgObj.quality*100)}" class="form-range quality-slider mb-1" id="quality-slider-${i}">
+          <button class="btn btn-outline-success btn-sm w-100 mb-1" id="convert-btn-${i}"><i class="bi bi-arrow-right-circle"></i> Convert & Download</button>
+        `;
+        preview.appendChild(div);
+      });
+      downloadBtns.style.display = images.length > 1 ? '' : 'none';
+      // Attach listeners for resizing, quality, and convert/download
+      images.forEach((imgObj, i) => {
+        document.getElementById(`resize-w-${i}`).addEventListener('input', e => {
+          imgObj.width = parseInt(e.target.value) || 1;
+        });
+        document.getElementById(`resize-h-${i}`).addEventListener('input', e => {
+          imgObj.height = parseInt(e.target.value) || 1;
+        });
+        document.getElementById(`quality-slider-${i}`).addEventListener('input', e => {
+          const val = parseInt(e.target.value);
+          imgObj.quality = val/100;
+          document.getElementById(`quality-val-${i}`).textContent = val;
+        });
+        document.getElementById(`convert-btn-${i}`).addEventListener('click', () => convertAndDownload(i));
+      });
+    }
+    function convertAndDownload(idx) {
+      const imgObj = images[idx];
+      const canvas = document.createElement('canvas');
+      canvas.width = imgObj.width;
+      canvas.height = imgObj.height;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff'; // White background for JPG
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const img = new window.Image();
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, imgObj.width, imgObj.height);
+        canvas.toBlob(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = imgObj.file.name.replace(/\.[^.]+$/, '') + '.jpg';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+        }, 'image/jpeg', imgObj.quality);
+      };
+      img.src = imgObj.dataUrl;
+    }
+    async function convertAllAndZip() {
+      const zip = new JSZip();
+      let done = 0;
+      for (let i = 0; i < images.length; i++) {
+        await new Promise(resolve => {
+          const imgObj = images[i];
+          const canvas = document.createElement('canvas');
+          canvas.width = imgObj.width;
+          canvas.height = imgObj.height;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          const img = new window.Image();
+          img.onload = function() {
+            ctx.drawImage(img, 0, 0, imgObj.width, imgObj.height);
+            canvas.toBlob(blob => {
+              zip.file(imgObj.file.name.replace(/\.[^.]+$/, '') + '.jpg', blob);
+              done++;
+              resolve();
+            }, 'image/jpeg', imgObj.quality);
+          };
+          img.src = imgObj.dataUrl;
+        });
+      }
+      const content = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'converted-jpgs.zip';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+    }
+    // Drag and drop
+    dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('dragover'); });
+    dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.classList.remove('dragover'); });
+    dropArea.addEventListener('drop', e => {
+      e.preventDefault();
+      dropArea.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+    fileElem.addEventListener('change', e => handleFiles(e.target.files));
+    downloadAllBtn.addEventListener('click', convertAllAndZip);
+  </script>
+</body>
+</html>

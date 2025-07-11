@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator for Electric Bills | Multi-Tools</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .tool-card { border: 2px dashed #ddd; border-radius: 12px; background: #fafbfc; max-width: 500px; min-height: 250px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); margin: 0 auto; transition: border-color 0.2s; }
+    .calculator-input { font-size: 1.2rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <div id="header"></div>
+  <div class="container mt-4">
+    <h1 class="mb-2">Calculator for Electric Bills</h1>
+    <p class="mb-4 text-muted">Use this tool to calculator for electric bills calculations.</p>
+    <div class="ad-space">Ad Space (Top Banner)</div>
+    <div class="tool-card p-4 mb-4 text-center">
+      <div class="mb-3">
+        <i class="bi bi-lightning" style="font-size: 2.5rem; color: #888;"></i>
+      </div>
+      <div class="row g-3">
+        <div class="col-12">
+          <input type="number" class="form-control calculator-input" id="input1" placeholder="Enter first value...">
+        </div>
+        <div class="col-12">
+          <input type="number" class="form-control calculator-input" id="input2" placeholder="Enter second value...">
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary" id="calculate-btn">Calculate</button>
+        </div>
+        <div class="col-12">
+          <div class="alert alert-info" id="result" style="display: none;">
+            <strong>Result:</strong> <span id="result-value">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ad-space">Ad Space (Bottom)</div>
+  </div>
+  <div id="footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer.js"></script>
+  <script>
+    const calculateBtn = document.getElementById('calculate-btn');
+    const result = document.getElementById('result');
+    const resultValue = document.getElementById('result-value');
+    
+    if (calculateBtn) {
+      calculateBtn.addEventListener('click', function() {
+        const input1 = parseFloat(document.getElementById('input1').value) || 0;
+        const input2 = parseFloat(document.getElementById('input2').value) || 0;
+        
+        // Simple calculation - can be customized per tool
+        const calculatedResult = input1 + input2;
+        
+        resultValue.textContent = calculatedResult;
+        result.style.display = 'block';
+      });
+    }
+  </script>
+</body>
+</html>

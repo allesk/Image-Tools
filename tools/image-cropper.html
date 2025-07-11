@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Cropper | Multi-Tools</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/image-tools-branding.css">
+  <style>
+    
+    
+    body.dark-mode 
+    body.dark-mode .ad-space {
+      background: #23272b;
+      color: #aaa;
+      border-color: #444;
+    }
+    
+    .tool-card.dragover {
+      border-color: #0d6efd;
+      background: #e9f5ff;
+    }
+    .tool-card input[type="file"] {
+      display: none;
+    }
+    .cropper-container {
+      max-width: 100%;
+      margin: 0 auto;
+      background: #f8f9fa;
+      border-radius: 8px;
+      overflow: hidden;
+      min-height: 250px;
+    }
+    .cropper-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin: 1rem 0 0.5rem 0;
+    }
+    .preview-box {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      padding: 0.5rem;
+      text-align: center;
+      margin: 0 auto 1rem auto;
+      max-width: 220px;
+    }
+    body.dark-mode .preview-box {
+      background: #23272b;
+      color: #e0e0e0;
+    }
+    .preview-img {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: 4px;
+      background: #f8f9fa;
+    }
+    .tool-card {
+      border: 2px dashed var(--card-border);
+      border-radius: 12px;
+      background: #fffbe6;
+      max-width: 700px;
+      min-height: 250px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      margin: 0 auto;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    body.dark-mode .tool-card {
+      background: #e0f0ff;
+      border-color: #444;
+      color: #222;
+    }
+    
+    @media (max-width: 768px) {
+      
+      .cropper-container { min-height: 180px; }
+      .preview-img { max-width: 120px; max-height: 120px; }
+    }
+    body.dark-mode .dashboard-title, body.dark-mode .dashboard-desc {
+      color: #fff !important;
+    }
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 900px;
+    }
+    .dashboard-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .dashboard-desc {
+      color: #444;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    body {
+      background: var(--brand-gray-50, #f8fafc);
+      color: #222;
+      font-family: 'Inter', 'Poppins', 'Montserrat', Arial, sans-serif;
+    }
+    .converter-dashboard {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem 1rem;
+    }
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .dashboard-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+    .dashboard-desc {
+      color: #444;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+    .upload-area {
+      background: #fffbe6;
+      border: 2px dashed #e0e0e0;
+      border-radius: 16px;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .upload-area.dragover {
+      border-color: var(--brand-primary, #6366f1);
+      background: #e0f0ff;
+    }
+    .upload-icon {
+      font-size: 2.5rem;
+      color: var(--brand-primary, #6366f1);
+      margin-bottom: 1rem;
+    }
+    .upload-area input[type="file"] {
+      display: none;
+    }
+    body.dark-mode {
+      background: #23272b !important;
+      color: #fff !important;
+    }
+    .dashboard-title, .dashboard-desc {
+      color: #1a1a1a;
+    }
+    body.dark-mode .dashboard-title, body.dark-mode .dashboard-desc {
+      color: #fff !important;
+    }
+    body.dark-mode .upload-area {
+      background: #e0f0ff;
+      border-color: #6366f1;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center; font-size:1.1rem; font-weight:600; margin-top:1.2rem; margin-bottom:0.5rem; letter-spacing:0.5px; background: none;">
+    <span style="background: linear-gradient(90deg, #2563eb, #06b6d4, #f59e42, #e11d48); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent;">Developed By Md Uddin, Ohio, USA</span>
+  </div>
+  <button class="btn btn-outline-secondary mode-toggle" id="darkToggle" title="Toggle light/dark mode" style="position: fixed; top: 1.2rem; right: 1.2rem; z-index: 200;"><i class="bi bi-moon"></i></button>
+  <!-- Ad Space (Top Banner) -->
+  <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-bottom: 2rem;">
+      Ad Space (Top Banner)
+    </div>
+  </div>
+  <div class="converter-dashboard">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Image Cropper</h1>
+      <div class="dashboard-desc">Crop images to your desired size and aspect ratio. Fast, private, and easy to use on any device.</div>
+    </div>
+    <div class="upload-area" id="drop-area" tabindex="0" aria-label="Upload image" style="margin-bottom:2rem;">
+      <div class="upload-icon"><i class="bi bi-crop"></i></div>
+      <div class="mb-2">Drag & Drop Image Here or <label class="btn btn-brand btn-sm mb-0"><i class="bi bi-upload"></i> Choose Image<input type="file" id="fileElem" accept="image/*,.bmp,.gif,.jpg,.jpeg,.png,.webp" tabindex="-1"></label></div>
+      <div class="small text-muted">Supported: JPG, PNG, GIF, BMP, WEBP</div>
+      <div id="errorMsg" class="text-danger mt-2"></div>
+    </div>
+    <div id="cropperWrap" class="mt-4" style="display:none;">
+      <div class="cropper-container mb-2">
+        <img id="image" style="max-width:100%; display:block; margin:0 auto;">
+      </div>
+      <div class="cropper-controls">
+        <select class="form-select form-select-sm w-auto" id="aspectRatio">
+          <option value="NaN">Freeform</option>
+          <option value="1">1:1</option>
+          <option value="4/3">4:3</option>
+          <option value="16/9">16:9</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" id="zoomIn"><i class="bi bi-zoom-in"></i></button>
+        <button class="btn btn-outline-secondary btn-sm" id="zoomOut"><i class="bi bi-zoom-out"></i></button>
+        <button class="btn btn-outline-secondary btn-sm" id="moveLeft"><i class="bi bi-arrow-left"></i></button>
+        <button class="btn btn-outline-secondary btn-sm" id="moveRight"><i class="bi bi-arrow-right"></i></button>
+        <button class="btn btn-outline-secondary btn-sm" id="moveUp"><i class="bi bi-arrow-up"></i></button>
+        <button class="btn btn-outline-secondary btn-sm" id="moveDown"><i class="bi bi-arrow-down"></i></button>
+        <button class="btn btn-outline-secondary btn-sm" id="rotateLeft"><i class="bi bi-arrow-counterclockwise"></i></button>
+        <button class="btn btn-outline-secondary btn-sm" id="rotateRight"><i class="bi bi-arrow-clockwise"></i></button>
+        <button class="btn btn-outline-secondary btn-sm" id="flipH"><i class="bi bi-arrow-left-right"></i></button>
+        <button class="btn btn-outline-secondary btn-sm" id="flipV"><i class="bi bi-arrow-up-down"></i></button>
+      </div>
+      <div class="preview-box">
+        <div class="mb-2">Crop Preview</div>
+        <canvas id="previewCanvas" class="preview-img"></canvas>
+      </div>
+      <div class="mb-2">
+        <select class="form-select form-select-sm w-auto d-inline" id="downloadFormat">
+          <option value="auto">Original Format</option>
+          <option value="png">PNG</option>
+          <option value="jpg">JPG</option>
+          <option value="webp">WEBP</option>
+        </select>
+        <button class="btn btn-brand btn-sm ms-2" id="downloadBtn"><i class="bi bi-download"></i> Download Cropped</button>
+      </div>
+    </div>
+  </div>
+  <!-- Ad Space (Bottom Banner) -->
+  <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-top: 2rem;">
+      Ad Space (Bottom Banner)
+    </div>
+  </div>
+  <div id="footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer.js"></script>
+  <script>
+    // Dark mode toggle
+    const darkToggle = document.getElementById('darkToggle');
+    function setDarkMode(on) {
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('darkMode', on ? '1' : '0');
+      darkToggle.innerHTML = on ? '<i class="bi bi-brightness-high"></i>' : '<i class="bi bi-moon"></i>';
+    }
+    darkToggle.addEventListener('click', () => setDarkMode(!document.body.classList.contains('dark-mode')));
+    if (localStorage.getItem('darkMode') === '1' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setDarkMode(true);
+    }
+
+    // Cropper logic
+    let cropper = null;
+    let currentFile = null;
+    const dropArea = document.getElementById('drop-area');
+    const fileElem = document.getElementById('fileElem');
+    const errorMsg = document.getElementById('errorMsg');
+    const cropperWrap = document.getElementById('cropperWrap');
+    const image = document.getElementById('image');
+    const previewCanvas = document.getElementById('previewCanvas');
+    const aspectRatio = document.getElementById('aspectRatio');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadFormat = document.getElementById('downloadFormat');
+    // Controls
+    const zoomIn = document.getElementById('zoomIn');
+    const zoomOut = document.getElementById('zoomOut');
+    const moveLeft = document.getElementById('moveLeft');
+    const moveRight = document.getElementById('moveRight');
+    const moveUp = document.getElementById('moveUp');
+    const moveDown = document.getElementById('moveDown');
+    const rotateLeft = document.getElementById('rotateLeft');
+    const rotateRight = document.getElementById('rotateRight');
+    const flipH = document.getElementById('flipH');
+    const flipV = document.getElementById('flipV');
+    let scaleX = 1, scaleY = 1;
+
+    function resetCropper() {
+      if (cropper) { cropper.destroy(); cropper = null; }
+      cropperWrap.style.display = 'none';
+      image.src = '';
+      errorMsg.textContent = '';
+      scaleX = 1; scaleY = 1;
+    }
+    function handleFiles(files) {
+      resetCropper();
+      if (!files.length) return;
+      const file = files[0];
+      if (!file.type.startsWith('image/')) {
+        errorMsg.textContent = 'Not a valid image file.';
+        return;
+      }
+      currentFile = file;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        image.src = e.target.result;
+        cropperWrap.style.display = '';
+      };
+      reader.readAsDataURL(file);
+    }
+    image.onload = function() {
+      if (cropper) cropper.destroy();
+      cropper = new Cropper(image, {
+        viewMode: 1,
+        aspectRatio: NaN,
+        autoCropArea: 1,
+        movable: true,
+        zoomable: true,
+        rotatable: true,
+        scalable: true,
+        crop() { updatePreview(); }
+      });
+      aspectRatio.value = 'NaN';
+      scaleX = 1; scaleY = 1;
+    };
+    function updatePreview() {
+      if (!cropper) return;
+      const canvas = cropper.getCroppedCanvas();
+      if (!canvas) return;
+      previewCanvas.width = canvas.width;
+      previewCanvas.height = canvas.height;
+      const ctx = previewCanvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(canvas, 0, 0);
+    }
+    aspectRatio.addEventListener('change', function() {
+      if (!cropper) return;
+      const val = aspectRatio.value === 'NaN' ? NaN : eval(aspectRatio.value);
+      cropper.setAspectRatio(val);
+    });
+    zoomIn.addEventListener('click', () => cropper && cropper.zoom(0.1));
+    zoomOut.addEventListener('click', () => cropper && cropper.zoom(-0.1));
+    moveLeft.addEventListener('click', () => cropper && cropper.move(-10,0));
+    moveRight.addEventListener('click', () => cropper && cropper.move(10,0));
+    moveUp.addEventListener('click', () => cropper && cropper.move(0,-10));
+    moveDown.addEventListener('click', () => cropper && cropper.move(0,10));
+    rotateLeft.addEventListener('click', () => cropper && cropper.rotate(-90));
+    rotateRight.addEventListener('click', () => cropper && cropper.rotate(90));
+    flipH.addEventListener('click', () => { if (cropper) { scaleX = -scaleX; cropper.scaleX(scaleX); } });
+    flipV.addEventListener('click', () => { if (cropper) { scaleY = -scaleY; cropper.scaleY(scaleY); } });
+    downloadBtn.addEventListener('click', function() {
+      if (!cropper) return;
+      const canvas = cropper.getCroppedCanvas();
+      if (!canvas) return;
+      let format = downloadFormat.value;
+      let ext = 'png';
+      let mime = 'image/png';
+      if (format === 'auto' && currentFile) {
+        const origExt = currentFile.name.split('.').pop().toLowerCase();
+        if (origExt === 'jpg' || origExt === 'jpeg') { mime = 'image/jpeg'; ext = 'jpg'; }
+        else if (origExt === 'webp') { mime = 'image/webp'; ext = 'webp'; }
+        else if (origExt === 'gif') { mime = 'image/gif'; ext = 'gif'; }
+        else if (origExt === 'bmp') { mime = 'image/bmp'; ext = 'bmp'; }
+      } else if (format === 'jpg') { mime = 'image/jpeg'; ext = 'jpg'; }
+      else if (format === 'webp') { mime = 'image/webp'; ext = 'webp'; }
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (currentFile ? currentFile.name.replace(/\.[^.]+$/, '') : 'cropped') + '-cropped.' + ext;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+      }, mime);
+    });
+    // Drag and drop
+    dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('dragover'); });
+    dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.classList.remove('dragover'); });
+    dropArea.addEventListener('drop', e => {
+      e.preventDefault();
+      dropArea.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+    fileElem.addEventListener('change', e => handleFiles(e.target.files));
+  </script>
+</body>
+</html>

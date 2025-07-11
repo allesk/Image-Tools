@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screenshot to PDF Converter | Multi-Tools</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/image-tools-branding.css">
+  <style>
+    
+    
+    body.dark-mode 
+    body.dark-mode .ad-space {
+      background: #23272b;
+      color: #aaa;
+      border-color: #444;
+    }
+    
+    .tool-card {
+      border: 2px dashed var(--card-border);
+      border-radius: 12px;
+      background: #fffbe6;
+      max-width: 700px;
+      min-height: 250px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      margin: 0 auto;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    body.dark-mode .tool-card {
+      background: #e0f0ff;
+      border-color: #444;
+      color: #222;
+    }
+    
+    .tool-card.dragover {
+      border-color: #0d6efd;
+      background: #e9f5ff;
+    }
+    .tool-card input[type="file"] {
+      display: none;
+    }
+    
+    .image-list {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .dark-mode .image-list {
+      background: #2c3034;
+      border-color: #444;
+    }
+    .image-item {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      border-bottom: 1px solid #eee;
+      cursor: move;
+      background: #fff;
+      transition: background 0.2s;
+    }
+    .dark-mode .image-item {
+      background: #2c3034;
+      border-color: #444;
+    }
+    .image-item:hover {
+      background: #f8f9fa;
+    }
+    .dark-mode .image-item:hover {
+      background: #343a40;
+    }
+    .image-item:last-child {
+      border-bottom: none;
+    }
+    .image-item.sortable-ghost {
+      opacity: 0.5;
+    }
+    .image-preview {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-right: 0.5rem;
+    }
+    .image-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .image-name {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .image-size {
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+    .remove-btn {
+      color: #dc3545;
+      background: none;
+      border: none;
+      padding: 0.25rem;
+      cursor: pointer;
+    }
+    .remove-btn:hover {
+      color: #c82333;
+    }
+    .settings-card {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .dark-mode .settings-card {
+      background: #2c3034;
+    }
+    @media (max-width: 768px) {
+      
+      .image-preview { width: 40px; height: 40px; }
+    }
+    body.dark-mode {
+      background: #23272b !important;
+      color: #fff !important;
+    }
+    .dashboard-title, .dashboard-desc {
+      color: #1a1a1a;
+    }
+    body.dark-mode .dashboard-title, body.dark-mode .dashboard-desc {
+      color: #fff !important;
+    }
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 900px;
+    }
+    .dashboard-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .dashboard-desc {
+      color: #444;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center; font-size:1.1rem; font-weight:600; margin-top:1.2rem; margin-bottom:0.5rem; letter-spacing:0.5px; background: none;">
+    <span style="background: linear-gradient(90deg, #2563eb, #06b6d4, #f59e42, #e11d48); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent;">Developed By Md Uddin, Ohio, USA</span>
+  </div>
+  <button class="btn btn-outline-secondary mode-toggle" id="darkToggle" title="Toggle light/dark mode" style="position: fixed; top: 1.2rem; right: 1.2rem; z-index: 200;"><i class="bi bi-moon"></i></button>
+  <!-- Ad Space (Top Banner) -->
+  <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-bottom: 2rem;">
+      Ad Space (Top Banner)
+    </div>
+  </div>
+  <div class="converter-dashboard">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Screenshot to PDF</h1>
+      <div class="dashboard-desc">Convert screenshots and images to PDF format. Fast, private, and easy to use on any device.</div>
+    </div>
+    <div class="tool-card p-4 mb-4" id="dropArea">
+      <div class="mb-3 text-center">
+        <i class="bi bi-file-earmark-pdf" style="font-size: 2.5rem; color: #888;"></i>
+      </div>
+      <div class="text-center mb-3">
+        <div class="h5 mb-2">Drag & Drop Screenshots Here</div>
+        <div class="mb-2 text-muted">or</div>
+        <label class="btn btn-brand mb-2">
+          <i class="bi bi-upload"></i> <i class="bi bi-upload"></i> Choose Files
+          <input type="file" id="fileInput" accept="image/*" multiple>
+        </label>
+        <div class="text-muted small">Supports PNG, JPG, BMP, WEBP</div>
+      </div>
+      <div id="imageList" class="image-list" style="display: none;">
+        <div id="imageItems"></div>
+      </div>
+      <div class="settings-card" id="settingsCard" style="display: none;">
+        <h6 class="mb-3"><i class="bi bi-gear"></i> PDF Settings</h6>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Page Size</label>
+            <select id="pageSize" class="form-select">
+              <option value="a4">A4 (210 × 297 mm)</option>
+              <option value="letter">Letter (8.5 × 11 in)</option>
+              <option value="legal">Legal (8.5 × 14 in)</option>
+              <option value="a3">A3 (297 × 420 mm)</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Orientation</label>
+            <select id="orientation" class="form-select">
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Margin (mm)</label>
+            <input type="number" id="margin" class="form-control" value="10" min="0" max="50">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Scaling</label>
+            <select id="scaling" class="form-select">
+              <option value="fit">Fit to page</option>
+              <option value="actual">Actual size</option>
+              <option value="custom">Custom scale</option>
+            </select>
+          </div>
+          <div class="col-md-6" id="customScaleDiv" style="display: none;">
+            <label class="form-label">Custom Scale (%)</label>
+            <input type="number" id="customScale" class="form-control" value="100" min="10" max="200">
+          </div>
+        </div>
+      </div>
+      <div class="text-center" id="generateBtnDiv" style="display: none;">
+        <button class="btn btn-brand" id="generatePdf">
+          <i class="bi bi-file-earmark-pdf"></i> Generate PDF
+        </button>
+      </div>
+    </div>
+    <!-- Ad Space (Bottom Banner) -->
+    <div style="max-width: 1200px; margin: 0 auto; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+      <div style="background: #fafbfc; border: 1px dashed #ddd; border-radius: 8px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.1rem; margin-top: 2rem;">
+        Ad Space (Bottom Banner)
+      </div>
+    </div>
+  </div>
+  <div id="footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer.js"></script>
+  <script>
+    // Dark mode toggle
+    const darkToggle = document.getElementById('darkToggle');
+    function setDarkMode(on) {
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('darkMode', on ? '1' : '0');
+      darkToggle.innerHTML = on ? '<i class="bi bi-brightness-high"></i>' : '<i class="bi bi-moon"></i>';
+    }
+    darkToggle.addEventListener('click', () => setDarkMode(!document.body.classList.contains('dark-mode')));
+    if (localStorage.getItem('darkMode') === '1' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setDarkMode(true);
+    }
+
+    // PDF Converter logic
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+    const imageList = document.getElementById('imageList');
+    const imageItems = document.getElementById('imageItems');
+    const settingsCard = document.getElementById('settingsCard');
+    const generateBtnDiv = document.getElementById('generateBtnDiv');
+    const generatePdf = document.getElementById('generatePdf');
+    const pageSize = document.getElementById('pageSize');
+    const orientation = document.getElementById('orientation');
+    const margin = document.getElementById('margin');
+    const scaling = document.getElementById('scaling');
+    const customScale = document.getElementById('customScale');
+    const customScaleDiv = document.getElementById('customScaleDiv');
+    
+    let images = [];
+
+    // Drag and drop
+    dropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropArea.classList.add('dragover');
+    });
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.classList.remove('dragover');
+    });
+    dropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropArea.classList.remove('dragover');
+      const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+      addImages(files);
+    });
+
+    // File input
+    fileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      addImages(files);
+    });
+
+    function addImages(files) {
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          images.push({
+            file: file,
+            dataUrl: e.target.result,
+            name: file.name,
+            size: formatFileSize(file.size)
+          });
+          updateImageList();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function updateImageList() {
+      if (images.length === 0) {
+        imageList.style.display = 'none';
+        settingsCard.style.display = 'none';
+        generateBtnDiv.style.display = 'none';
+        return;
+      }
+
+      imageList.style.display = 'block';
+      settingsCard.style.display = 'block';
+      generateBtnDiv.style.display = 'block';
+
+      imageItems.innerHTML = images.map((img, index) => `
+        <div class="image-item" data-index="${index}">
+          <img src="${img.dataUrl}" class="image-preview" alt="${img.name}">
+          <div class="image-info">
+            <div class="image-name">${img.name}</div>
+            <div class="image-size">${img.size}</div>
+          </div>
+          <button class="remove-btn" onclick="removeImage(${index})">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      `).join('');
+
+      // Initialize sortable
+      new Sortable(imageItems, {
+        animation: 150,
+        onEnd: function(evt) {
+          const oldIndex = evt.oldIndex;
+          const newIndex = evt.newIndex;
+          const item = images.splice(oldIndex, 1)[0];
+          images.splice(newIndex, 0, item);
+        }
+      });
+    }
+
+    function removeImage(index) {
+      images.splice(index, 1);
+      updateImageList();
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Settings
+    scaling.addEventListener('change', () => {
+      customScaleDiv.style.display = scaling.value === 'custom' ? 'block' : 'none';
+    });
+
+    // Generate PDF
+    generatePdf.addEventListener('click', async () => {
+      if (images.length === 0) return;
+
+      generatePdf.disabled = true;
+      generatePdf.innerHTML = '<i class="bi bi-hourglass-split"></i> Generating...';
+
+      try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: orientation.value,
+          unit: 'mm',
+          format: pageSize.value
+        });
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const marginValue = parseInt(margin.value);
+        const availableWidth = pageWidth - (marginValue * 2);
+        const availableHeight = pageHeight - (marginValue * 2);
+
+        for (let i = 0; i < images.length; i++) {
+          if (i > 0) pdf.addPage();
+
+          const img = new Image();
+          img.src = images[i].dataUrl;
+
+          await new Promise((resolve) => {
+            img.onload = () => {
+              let imgWidth, imgHeight;
+
+              if (scaling.value === 'fit') {
+                const scaleX = availableWidth / img.width;
+                const scaleY = availableHeight / img.height;
+                const scale = Math.min(scaleX, scaleY);
+                imgWidth = img.width * scale;
+                imgHeight = img.height * scale;
+              } else if (scaling.value === 'actual') {
+                imgWidth = img.width * 0.264583; // Convert px to mm
+                imgHeight = img.height * 0.264583;
+              } else { // custom
+                const scale = parseInt(customScale.value) / 100;
+                imgWidth = img.width * scale * 0.264583;
+                imgHeight = img.height * scale * 0.264583;
+              }
+
+              const x = marginValue + (availableWidth - imgWidth) / 2;
+              const y = marginValue + (availableHeight - imgHeight) / 2;
+
+              pdf.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
+              resolve();
+            };
+          });
+        }
+
+        pdf.save('screenshots.pdf');
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+        alert('Error generating PDF. Please try again.');
+      } finally {
+        generatePdf.disabled = false;
+        generatePdf.innerHTML = '<i class="bi bi-file-earmark-pdf"></i> Generate PDF';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ImageTools - Your All-in-One Image Toolkit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/image-tools-branding.css">
+  <style>
+    :root {
+      --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --gradient-dark: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      --neon-blue: #00d4ff;
+      --neon-purple: #a855f7;
+      --neon-green: #10b981;
+      --text-light: #f8fafc;
+      --text-muted: #cbd5e1;
+      --bg-dark: #0f172a;
+      --bg-darker: #020617;
+      --card-bg: rgba(30, 41, 59, 0.8);
+      --card-border: rgba(148, 163, 184, 0.1);
+    }
+
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--gradient-dark);
+      color: var(--text-light);
+      overflow-x: hidden;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      background: var(--gradient-accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.1rem, 2vw, 1.3rem);
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+      max-width: 600px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+      background: var(--gradient-accent);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(79, 172, 254, 0.3);
+    }
+
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(79, 172, 254, 0.4);
+      color: white;
+    }
+
+    .btn-hero-secondary {
+      background: transparent;
+      border: 2px solid var(--neon-blue);
+      color: var(--neon-blue);
+      font-weight: 600;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-hero-secondary:hover {
+      background: var(--neon-blue);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 212, 255, 0.3);
+    }
+
+    /* Tools Grid */
+    .tools-section {
+      padding: 6rem 0;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1rem;
+      background: var(--gradient-secondary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      margin-bottom: 4rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .tool-card-home {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tool-card-home::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-accent);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .tool-card-home:hover {
+      transform: translateY(-8px);
+      border-color: var(--neon-blue);
+      box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
+    }
+
+    .tool-card-home:hover::before {
+      transform: scaleX(1);
+    }
+
+    .tool-card-home .tool-icon {
+      margin: 0 auto 1.5rem;
+      width: 4rem;
+      height: 4rem;
+      font-size: 2rem;
+    }
+
+    .tool-card-home h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-light);
+    }
+
+    .tool-card-home p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .tool-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--neon-blue);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .tool-link:hover {
+      color: var(--text-light);
+      transform: translateX(4px);
+    }
+
+    /* Features Section */
+    .features-section {
+      padding: 6rem 0;
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .feature-icon {
+      width: 4rem;
+      height: 4rem;
+      background: var(--gradient-accent);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .feature-card h4 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-light);
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Testimonials */
+    .testimonials-section {
+      padding: 6rem 0;
+    }
+
+    .testimonial-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .testimonial-text {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .testimonial-author {
+      font-weight: 600;
+      color: var(--neon-blue);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-darker);
+      padding: 3rem 0 2rem;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-section h5 {
+      color: var(--text-light);
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .footer-section a {
+      color: var(--text-muted);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .footer-section a:hover {
+      color: var(--neon-blue);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--card-border);
+      padding-top: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    /* Animations */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.8s ease forwards;
+    }
+
+    .fade-in-up:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in-up:nth-child(3) { animation-delay: 0.4s; }
+    .fade-in-up:nth-child(4) { animation-delay: 0.6s; }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .float-animation {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .tools-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .hero-logo-domain {
+        font-size: 1rem !important;
+        margin-bottom: 0.7rem !important;
+      }
+      .tool-icon.large img {
+        width: 80px !important;
+        height: 80px !important;
+        max-width: 80px !important;
+        max-height: 80px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <div class="brand-logo-icon me-2">
+          <img src="assets/img/Logo1.png" alt="GlobeTechUSA Logo" style="width:2.2rem; height:2.2rem; border-radius:8px;">
+        </div>
+        <span style="font-weight: 700; font-size: 1.5rem;">ImageTools</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#tools">Tools</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#features">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#testimonials">Testimonials</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 hero-content">
+          <h1 class="hero-title fade-in-up">Your All-in-One Image Toolkit — Fast. Simple. Free.</h1>
+          <p class="hero-subtitle fade-in-up">Compress, convert, resize, crop, and more — all in one place with lightning-fast performance and beautiful results.</p>
+          <div class="hero-buttons fade-in-up">
+            <a href="#tools" class="btn btn-hero-primary">Get Started</a>
+            <a href="tools/image-to-png.html" class="btn btn-hero-secondary">Try a Tool</a>
+          </div>
+        </div>
+        <div class="col-lg-6 text-center">
+          <div class="float-animation">
+            <div class="hero-logo-domain" style="text-align:center; margin-bottom: 1rem; font-size: 1.2rem; font-weight: 700; color: #fff; letter-spacing: 1px;">www.globetechusa.com</div>
+            <div class="tool-icon large" style="width: 8rem; height: 8rem; font-size: 4rem; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+              <img src="assets/img/Logo1.png" alt="GlobeTechUSA Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 18px; box-shadow: 0 2px 16px rgba(0,0,0,0.12); max-width: 128px; max-height: 128px;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools Section -->
+  <section id="tools" class="tools-section">
+    <div class="container">
+      <h2 class="section-title fade-in-up">Powerful Image Tools</h2>
+      <p class="section-subtitle fade-in-up">Everything you need to edit, convert, and optimize your images — all in one place.</p>
+      
+      <div class="tools-grid">
+        <div class="tool-card-home fade-in-up">
+          <div class="tool-icon converter">
+            <i class="bi bi-arrow-repeat"></i>
+          </div>
+          <h3>Image Converters</h3>
+          <p>Convert between PNG, JPG, WebP, and more formats with batch processing and quality control.</p>
+          <a href="tools/image-to-png.html" class="tool-link">Try PNG Converter <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="tool-card-home fade-in-up">
+          <div class="tool-icon resizer">
+            <i class="bi bi-arrows-angle-expand"></i>
+          </div>
+          <h3>Image Resizer</h3>
+          <p>Resize images to any dimensions with batch processing, aspect ratio lock, and multiple formats.</p>
+          <a href="tools/image-resizer.html" class="tool-link">Try Resizer <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="tool-card-home fade-in-up">
+          <div class="tool-icon compressor">
+            <i class="bi bi-file-earmark-zip"></i>
+          </div>
+          <h3>Image Compressor</h3>
+          <p>Reduce file sizes while maintaining quality with adjustable compression levels and batch processing.</p>
+          <a href="tools/image-compressor.html" class="tool-link">Try Compressor <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="tool-card-home fade-in-up">
+          <div class="tool-icon cropper">
+            <i class="bi bi-crop"></i>
+          </div>
+          <h3>Image Cropper</h3>
+          <p>Crop images with precision using an interactive interface with aspect ratios and zoom controls.</p>
+          <a href="tools/image-cropper.html" class="tool-link">Try Cropper <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="tool-card-home fade-in-up">
+          <div class="tool-icon encoder">
+            <i class="bi bi-code-slash"></i>
+          </div>
+          <h3>Base64 Converter</h3>
+          <p>Convert images to Base64 format for web embedding with instant conversion and copy options.</p>
+          <a href="tools/convert-image-to-base64.html" class="tool-link">Try Converter <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="tool-card-home fade-in-up">
+          <div class="tool-icon generator">
+            <i class="bi bi-qr-code"></i>
+          </div>
+          <h3>QR Code Generator</h3>
+          <p>Generate QR codes for URLs, text, and contact info with customizable colors and logo embedding.</p>
+          <a href="tools/qr-code-generator.html" class="tool-link">Try Generator <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="tool-card-home fade-in-up">
+          <div class="tool-icon generator">
+            <i class="bi bi-film"></i>
+          </div>
+          <h3>GIF Maker</h3>
+          <p>Create animated GIFs from images or videos with customizable frame delay and loop settings.</p>
+          <a href="tools/gif-maker.html" class="tool-link">Try GIF Maker <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="tool-card-home fade-in-up">
+          <div class="tool-icon pdf">
+            <i class="bi bi-file-earmark-pdf"></i>
+          </div>
+          <h3>PDF Converter</h3>
+          <p>Convert multiple screenshots to PDF with custom page settings, reordering, and batch processing.</p>
+          <a href="tools/screenshot-to-pdf.html" class="tool-link">Try Converter <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="features-section">
+    <div class="container">
+      <h2 class="section-title fade-in-up">Why Choose ImageTools?</h2>
+      <p class="section-subtitle fade-in-up">Built for speed, privacy, and ease of use.</p>
+      
+      <div class="features-grid">
+        <div class="feature-card fade-in-up">
+          <div class="feature-icon">
+            <i class="bi bi-lightning"></i>
+          </div>
+          <h4>Lightning Fast</h4>
+          <p>All processing happens in your browser for instant results. No waiting, no upload delays.</p>
+        </div>
+
+        <div class="feature-card fade-in-up">
+          <div class="feature-icon">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h4>100% Private</h4>
+          <p>Your images never leave your device. Complete privacy and security guaranteed.</p>
+        </div>
+
+        <div class="feature-card fade-in-up">
+          <div class="feature-icon">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <h4>No Watermarks</h4>
+          <p>Clean, professional results without any watermarks or branding on your images.</p>
+        </div>
+
+        <div class="feature-card fade-in-up">
+          <div class="feature-icon">
+            <i class="bi bi-phone"></i>
+          </div>
+          <h4>Mobile Friendly</h4>
+          <p>Works perfectly on all devices - desktop, tablet, and mobile with responsive design.</p>
+        </div>
+
+        <div class="feature-card fade-in-up">
+          <div class="feature-icon">
+            <i class="bi bi-moon-stars"></i>
+          </div>
+          <h4>Dark Mode</h4>
+          <p>Eye-friendly dark mode with automatic detection and persistent preferences.</p>
+        </div>
+
+        <div class="feature-card fade-in-up">
+          <div class="feature-icon">
+            <i class="bi bi-archive"></i>
+          </div>
+          <h4>Batch Processing</h4>
+          <p>Process multiple images at once with drag-and-drop support and ZIP downloads.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="testimonials-section">
+    <div class="container">
+      <h2 class="section-title fade-in-up">What Users Say</h2>
+      <p class="section-subtitle fade-in-up">Join thousands of satisfied users worldwide.</p>
+      
+      <div class="row">
+        <div class="col-lg-4 mb-4">
+          <div class="testimonial-card fade-in-up">
+            <p class="testimonial-text">"Incredibly fast and easy to use. I can resize dozens of images in seconds without any quality loss."</p>
+            <div class="testimonial-author">— Sarah Chen, Web Designer</div>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+          <div class="testimonial-card fade-in-up">
+            <p class="testimonial-text">"The privacy aspect is amazing. No uploads, no servers, just pure client-side processing. Love it!"</p>
+            <div class="testimonial-author">— Mike Rodriguez, Developer</div>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+          <div class="testimonial-card fade-in-up">
+            <p class="testimonial-text">"Perfect for my social media workflow. Batch processing saves me hours every week."</p>
+            <div class="testimonial-author">— Emma Thompson, Content Creator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h5>ImageTools</h5>
+          <p style="color: var(--text-muted);">Your all-in-one image toolkit for fast, simple, and free image processing.</p>
+        </div>
+        <div class="footer-section">
+          <h5>Tools</h5>
+          <a href="tools/image-to-png.html">PNG Converter</a>
+          <a href="tools/image-to-jpg.html">JPG Converter</a>
+          <a href="tools/image-resizer.html">Image Resizer</a>
+          <a href="tools/image-compressor.html">Image Compressor</a>
+        </div>
+        <div class="footer-section">
+          <h5>More Tools</h5>
+          <a href="tools/image-cropper.html">Image Cropper</a>
+          <a href="tools/qr-code-generator.html">QR Generator</a>
+          <a href="tools/gif-maker.html">GIF Maker</a>
+          <a href="tools/screenshot-to-pdf.html">PDF Converter</a>
+        </div>
+        <div class="footer-section">
+          <h5>Support</h5>
+          <a href="tools/privacy-policy.html">Privacy Policy</a>
+          <a href="tools/terms-of-service.html">Terms of Service</a>
+          <a href="tools/contact-us.html">Contact Us</a>
+          <a href="help-center.html">Help Center</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 ImageTools. All rights reserved. Made with ❤️ Md Uddin, Ohio, USA.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Intersection Observer for animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Observe all fade-in-up elements
+    document.querySelectorAll('.fade-in-up').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Navbar background on scroll
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        navbar.style.background = 'rgba(15, 23, 42, 0.95)';
+      } else {
+        navbar.style.background = 'rgba(15, 23, 42, 0.9)';
+      }
+    });
+  </script>
+</body>
+</html> 
